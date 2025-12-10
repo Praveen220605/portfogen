@@ -33,7 +33,7 @@
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 17px; /* bigger base font size */
+      font-size: 17px;
       color: var(--text);
       background:
         radial-gradient(circle at 0% 0%, rgba(56,189,248,0.35), transparent 55%),
@@ -48,7 +48,6 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      /* match AI page background */
       background:
         radial-gradient(circle at 0% 0%, rgba(56,189,248,0.35), transparent 55%),
         radial-gradient(circle at 100% 100%, rgba(59,130,246,0.4), transparent 55%),
@@ -75,6 +74,7 @@
       text-align: center;
     }
 
+    /* Circle container */
     .splash-logo-circle {
       width: 170px;
       height: 170px;
@@ -87,15 +87,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden; /* ✅ keeps logo inside circle */
+      overflow: hidden;
       animation: splash-pop 1s ease-out forwards;
-    }
-
-    .splash-logo-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* ✅ fits your logo properly */
-      animation: logo-spin 1.2s ease-out forwards;
     }
 
     .splash-title-main {
@@ -131,11 +124,6 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
-    @keyframes logo-spin {
-      0% { transform: scale(0.7) rotate(-20deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-
     @keyframes text-rise {
       0% { transform: translateY(12px); opacity: 0; }
       100% { transform: translateY(0); opacity: 1; }
@@ -168,6 +156,46 @@
       0% { transform: translateX(-100%); }
       50% { transform: translateX(0); }
       100% { transform: translateX(120%); }
+    }
+
+    /* ====== MULTI-PART LOGO ANIMATION (from first code) ====== */
+
+    .logo-explode {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+
+    .logo-part {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url("logo/LOGO.png") center/contain no-repeat;
+      opacity: 0;
+    }
+
+    .part-left   { transform: translateX(-260px); }
+    .part-right  { transform: translateX(260px); }
+    .part-top    { transform: translateY(-260px); }
+    .part-bottom { transform: translateY(260px); }
+
+    .logo-merge {
+      animation: merge 1s forwards;
+    }
+
+    @keyframes merge {
+      to { transform: translate(0); opacity: 1; }
+    }
+
+    .logo-final {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: spin 1.3s ease forwards;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* ---------- MAIN APP SHELL ---------- */
@@ -726,16 +754,20 @@
 </head>
 
 <body>
-  <!-- SPLASH SCREEN -->
+  <!-- SPLASH SCREEN with multi-part logo -->
   <div class="splash-screen" id="splashScreen">
     <div class="splash-logo-wrap">
       <div class="splash-logo-circle">
-        <img src="logo/LOGO.png" alt="Website Logo" />
+        <!-- Multi-part logo explosion -->
+        <div class="logo-explode">
+          <div class="logo-part part-left"></div>
+          <div class="logo-part part-right"></div>
+          <div class="logo-part part-top"></div>
+          <div class="logo-part part-bottom"></div>
+        </div>
       </div>
       <div class="splash-title-main">SMART PORTFOLIO</div>
       <div class="splash-title-sub">AI PORTFOLIO STUDIO</div>
-      <!-- Optional: tagline, uncomment if you want -->
-      <!-- <div class="splash-tagline">Wheel of Knowledge rolls on</div> -->
       <div class="splash-progress">
         <div class="splash-progress-inner"></div>
       </div>
@@ -978,6 +1010,25 @@
 
     const splashScreen = document.getElementById("splashScreen");
     const appShell = document.getElementById("appShell");
+
+    /* ---- NEW: multi-part logo animation logic ---- */
+    const logoParts = document.querySelectorAll(".logo-part");
+    const logoExplode = document.querySelector(".logo-explode");
+
+    // animate parts in
+    setTimeout(() => {
+      logoParts.forEach(p => p.classList.add("logo-merge"));
+    }, 300);
+
+    // replace with final spinning logo
+    setTimeout(() => {
+      if (!logoExplode) return;
+      const final = document.createElement("img");
+      final.src = "logo/LOGO.png";
+      final.className = "logo-final";
+      logoExplode.innerHTML = "";
+      logoExplode.appendChild(final);
+    }, 1300);
 
     function setButtonLoading(btn, isLoading, loadingLabel = "Working…") {
       if (!btn) return;
@@ -1237,7 +1288,6 @@
 
     // Splash + init
     document.addEventListener("DOMContentLoaded", () => {
-      // Show splash for ~2.6 seconds, then reveal app & start backend calls
       setTimeout(() => {
         splashScreen.classList.add("splash-hidden");
         appShell.classList.add("app-visible");
