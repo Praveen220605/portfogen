@@ -1,0 +1,9 @@
+# Python Virtual Environment
+venv/
+# Byte-compiled files
+__pycache__/
+*.pyc
+# Environment variables (SECURITY RISK if committed!)
+.env
+# Database files (if you use a local database)
+*.sqlite3
