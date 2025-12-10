@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Portfolio Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --surface: #020617;
+      --card: #020617;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #0ea5e9;
+      --accent-strong: #2563eb;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --danger: #fb7185;
+      --success: #4ade80;
+      --radius-lg: 18px;
+      --radius-md: 10px;
+      --shadow-md: 0 18px 40px rgba(15, 23, 42, 0.85);
+      --shadow-sm: 0 10px 26px rgba(15, 23, 42, 0.8);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 17px; /* << bigger base font size */
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,0.35), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59,130,246,0.4), transparent 55%),
+        linear-gradient(135deg, #020617, #020617 40%, #020617);
+      display: block;
+    }
+
+    .app-shell {
+      width: 100%;
+      min-height: 100vh;
+      padding: 20px 32px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .app-shell {
+        padding: 16px;
+      }
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-orb {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background:
+        conic-gradient(from 220deg, #0ea5e9, #22c55e, #a855f7, #0ea5e9);
+      box-shadow: 0 0 24px rgba(56,189,248,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-orb::after {
+      content: "";
+      position: absolute;
+      inset: 15%;
+      border-radius: inherit;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.7), transparent 50%);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title span.top {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .brand-title span.main {
+      font-size: 1.6rem;
+      font-weight: 600;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: baseline;
+    }
+
+    .brand-title span.main span.accent {
+      font-size: 0.9rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.7);
+      background: rgba(15,23,42,0.95);
+      color: #e0f2fe;
+    }
+
+    .brand-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 620px;
+    }
+
+    .status-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      min-width: 210px;
+    }
+
+    .status-pill {
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15,23,42,0.98);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+    }
+
+    .status-label {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .status-label small {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .tip-chip {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.75);
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .app-header {
+        flex-direction: column;
+      }
+      .status-block {
+        align-items: flex-start;
+      }
+    }
+
+    .content-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 960px) {
+      .content-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: rgba(15,23,42,0.98);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(51,65,85,0.95);
+      box-shadow: var(--shadow-md);
+      padding: 16px 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.26), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .card-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .step-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      max-width: 430px;
+    }
+
+    .endpoint-tag {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.85);
+      background: rgba(15,23,42,0.98);
+      color: #e0f2fe;
+      white-space: nowrap;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      font-size: 0.8rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.98);
+      color: var(--muted);
+    }
+
+    .chip.ai {
+      border-color: rgba(56,189,248,0.9);
+      background: var(--accent-soft);
+      color: #e0f2fe;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: baseline;
+      color: #e2e8f0;
+    }
+
+    label span.helper {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    textarea,
+    input[type="file"],
+    select {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.98);
+      color: var(--text);
+      padding: 9px 11px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.85);
+      background: #020617;
+      transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .json-editor {
+      min-height: 170px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      line-height: 1.5;
+      font-size: 0.82rem;
+    }
+
+    input::file-selector-button {
+      background: rgba(15,23,42,0.98);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 4px 11px;
+      margin-right: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    input::file-selector-button:hover {
+      background: rgba(37,99,235,0.9);
+      border-color: rgba(56,189,248,0.9);
+      color: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .muted-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      align-items: center;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: white;
+      box-shadow: 0 12px 26px rgba(37,99,235,0.6);
+      transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast),
+        filter var(--transition-fast),
+        opacity var(--transition-fast);
+    }
+
+    button.secondary {
+      background: rgba(15,23,42,0.98);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.9);
+    }
+
+    button.small {
+      padding: 6px 13px;
+      font-size: 0.8rem;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(37,99,235,0.65);
+      filter: brightness(1.04);
+    }
+
+    button.secondary:hover:not(:disabled) {
+      box-shadow: 0 12px 26px rgba(15,23,42,0.96);
+      border-color: rgba(148,163,184,0.85);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .dot-loader {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: white;
+      box-shadow:
+        -6px 0 0 0 rgba(255,255,255,0.7),
+         0   0 0 0 rgba(255,255,255,0.9),
+         6px 0 0 0 rgba(255,255,255,0.7);
+    }
+
+    .alert {
+      margin-top: 6px;
+      padding: 7px 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      font-size: 0.8rem;
+      display: none;
+    }
+
+    .alert--error {
+      background: rgba(248,113,113,0.12);
+      border-color: rgba(248,113,113,0.75);
+      color: #fecaca;
+    }
+
+    .alert--success {
+      background: rgba(52,211,153,0.12);
+      border-color: rgba(52,211,153,0.75);
+      color: #bbf7d0;
+    }
+
+    .ai-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ai-hint {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(148,163,184,0.75);
+      padding: 9px 11px;
+      background: rgba(15,23,42,0.98);
+      font-size: 0.82rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .ai-hint-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .ai-hint strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    iframe {
+      width: 100%;
+      min-height: 320px;
+      border-radius: 12px;
+      border: 1px solid rgba(51,65,85,0.95);
+      background: #020617;
+    }
+
+    .download-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .download-link {
+      font-size: 0.8rem;
+      color: #e0f2fe;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.9);
+      background: rgba(15,23,42,0.98);
+    }
+
+    .download-link:hover {
+      text-decoration: underline;
+      background: rgba(37,99,235,0.9);
+    }
+
+    details {
+      margin-top: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.98);
+      padding: 6px 10px 8px;
+      font-size: 0.8rem;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.78rem;
+      margin: 6px 0 0;
+      max-height: 210px;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    .app-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding-top: 8px;
+      border-top: 1px solid rgba(31,41,55,0.9);
+      margin-top: 4px;
+    }
+
+    .footer-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer-chip {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.75);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="brand-row">
+          <div class="logo-orb"></div>
+          <div class="brand-title">
+            <span class="top">AI portfolio studio</span>
+            <span class="main">
+              Smart Portfolio
+              <span class="accent">Powered by your FastAPI backend</span>
+            </span>
+          </div>
+        </div>
+        <p class="brand-subtitle">
+          Feed your resume or a short description and let the AI pipeline convert it
+          into a polished HTML portfolio — editable via JSON in the browser.
+        </p>
+      </div>
+
+      <div class="status-block">
+        <div class="status-pill" id="apiStatusPill">
+          <span class="status-dot"></span>
+          <div class="status-label">
+            <span>Backend: <strong id="apiStatusText">Checking…</strong></span>
+            <small id="apiStatusSub">/api/v1/portfolio</small>
+          </div>
+        </div>
+        <div class="tip-chip">
+          Tip: keep FastAPI running on <code>http://localhost:8000</code>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title-block">
+            <span class="step-label">Step 1 · Input</span>
+            <div class="card-title">Give the AI something to work with</div>
+            <p class="card-subtitle">
+              Upload your resume or just describe yourself. The backend will transform it
+              into structured <code>PortfolioData</code>.
+            </p>
+          </div>
+          <span class="endpoint-tag">/extract/resume · /extract/prompt</span>
+        </div>
+
+        <div class="chip-row">
+          <span class="chip ai">OpenAI & NLP extraction</span>
+          <span class="chip">PDF / DOC / DOCX</span>
+          <span class="chip">Text-only option available</span>
+        </div>
+
+        <div class="field-group" style="margin-top: 10px;">
+          <label for="resumeFile">
+            Resume upload
+            <span class="helper">Pick a file, then click extract</span>
+          </label>
+          <input id="resumeFile" type="file" accept=".pdf,.doc,.docx" />
+          <div class="button-row">
+            <button id="resumeExtractBtn">
+              <span class="dot-loader" aria-hidden="true"></span>
+              <span>Extract from resume</span>
+            </button>
+            <span class="muted-text">or use the text prompt below</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="promptInput">
+            Text description
+            <span class="helper">Example: “I’m a final-year AI & DS student…”</span>
+          </label>
+          <textarea id="promptInput"
+            placeholder="Write about your skills, education, projects, and internships. The backend will build JSON for you."></textarea>
+          <div class="button-row">
+            <button class="secondary" id="promptExtractBtn">
+              <span>Extract from text</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="extractAlert" class="alert alert--error"></div>
+
+        <hr style="border:none;border-top:1px dashed rgba(51,65,85,0.95);margin:12px 0;" />
+
+        <div class="card-header" style="margin-top:4px;">
+          <div class="card-title-block">
+            <span class="step-label">Step 2 · Edit</span>
+            <div class="card-title">Review the AI-generated JSON</div>
+            <p class="card-subtitle">
+              This JSON matches your <code>PortfolioData</code> model.
+              Tweak names, skills, projects, or anything else before generating the site.
+            </p>
+          </div>
+          <span class="endpoint-tag">/refine</span>
+        </div>
+
+        <div class="field-group">
+          <label for="jsonEditor">
+            Portfolio JSON
+            <span class="helper">Auto-filled after extraction</span>
+          </label>
+          <textarea id="jsonEditor" class="json-editor"
+            placeholder='Click “Extract” above to populate this with AI-generated data.'></textarea>
+          <span class="muted-text">
+            Shape:
+            <code>{ personal_info, summary, experience[], education[], skills[], projects[], certifications[] }</code>
+          </span>
+        </div>
+
+        <div class="field-group">
+          <label for="refineInput">
+            Optional AI refinement
+            <span class="helper">Tell the model how to improve the data</span>
+          </label>
+          <textarea id="refineInput"
+            placeholder="Example: ‘Shorten the summary and highlight my machine learning projects.’"></textarea>
+          <div class="button-row">
+            <button class="secondary small" id="refineBtn">
+              Refine JSON with AI
+            </button>
+            <span class="muted-text">
+              Sends <code>current_data + refinement</code> → returns improved <code>PortfolioData</code>.
+            </span>
+          </div>
+        </div>
+
+        <div id="refineAlert" class="alert alert--error"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title-block">
+            <span class="step-label">Step 3 · Generate</span>
+            <div class="card-title">Choose a template & preview the site</div>
+            <p class="card-subtitle">
+              Select a portfolio template, then generate the final HTML.
+              You can preview it here and download the file.
+            </p>
+          </div>
+          <span class="endpoint-tag">/templates · /generate</span>
+        </div>
+
+        <div class="chip-row">
+          <span class="chip ai">AI content · template-based layout</span>
+          <span class="chip">Static HTML output</span>
+        </div>
+
+        <div class="ai-panel">
+          <div class="field-group" style="margin-top:4px;">
+            <label for="templateSelect">
+              Portfolio template
+              <span class="helper">Fetched from backend</span>
+            </label>
+            <select id="templateSelect"></select>
+            <p class="muted-text" id="templateDescription"></p>
+          </div>
+
+          <div class="button-row">
+            <button id="generateBtn">
+              <span class="dot-loader" aria-hidden="true"></span>
+              <span>Generate HTML portfolio</span>
+            </button>
+          </div>
+
+          <div id="generateAlert" class="alert alert--error"></div>
+
+          <div class="ai-hint">
+            <div class="ai-hint-icon">🤖</div>
+            <div>
+              <strong>AI tip</strong>
+              Change the refinement text on the left and regenerate.
+              It’s like chatting with your portfolio until it looks perfect.
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Live preview</label>
+            <iframe id="previewFrame" title="Portfolio Preview"></iframe>
+            <div class="download-row">
+              <a id="downloadHtmlLink" class="download-link" href="#" download="portfolio.html" style="display:none;">
+                ⬇ Download generated HTML
+              </a>
+              <span class="muted-text">
+                The HTML includes inline styles so you can host it anywhere.
+              </span>
+            </div>
+          </div>
+
+          <details>
+            <summary>Show raw HTML response</summary>
+            <pre id="htmlRawPreview"></pre>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>If requests fail, check CORS settings in your FastAPI app.</span>
+        <span class="footer-chip">FastAPI · Pydantic · OpenAI · Frontend</span>
+      </div>
+      <div>Connected to <code>/api/v1/portfolio</code></div>
+    </footer>
+  </div>
+
+  <script>
+    const API_BASE_URL = "http://localhost:8000/api/v1/portfolio";
+
+    const apiStatusText = document.getElementById("apiStatusText");
+    const apiStatusSub = document.getElementById("apiStatusSub");
+    const apiStatusPill = document.getElementById("apiStatusPill");
+
+    const resumeFileInput = document.getElementById("resumeFile");
+    const resumeExtractBtn = document.getElementById("resumeExtractBtn");
+    const promptInput = document.getElementById("promptInput");
+    const promptExtractBtn = document.getElementById("promptExtractBtn");
+    const extractAlert = document.getElementById("extractAlert");
+
+    const jsonEditor = document.getElementById("jsonEditor");
+    const refineInput = document.getElementById("refineInput");
+    const refineBtn = document.getElementById("refineBtn");
+    const refineAlert = document.getElementById("refineAlert");
+
+    const templateSelect = document.getElementById("templateSelect");
+    const templateDescription = document.getElementById("templateDescription");
+    const generateBtn = document.getElementById("generateBtn");
+    const generateAlert = document.getElementById("generateAlert");
+
+    const previewFrame = document.getElementById("previewFrame");
+    const downloadHtmlLink = document.getElementById("downloadHtmlLink");
+    const htmlRawPreview = document.getElementById("htmlRawPreview");
+
+    function setButtonLoading(btn, isLoading, loadingLabel = "Working…") {
+      if (!btn) return;
+      if (isLoading) {
+        if (!btn.dataset.originalLabel) {
+          btn.dataset.originalLabel = btn.textContent.trim();
+        }
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="dot-loader" aria-hidden="true"></span><span>' +
+          loadingLabel +
+          "</span>";
+      } else {
+        btn.disabled = false;
+        const label = btn.dataset.originalLabel || "Submit";
+        btn.textContent = label;
+      }
+    }
+
+    function showAlert(el, message, type = "error") {
+      if (!el) return;
+      if (!message) {
+        el.style.display = "none";
+        return;
+      }
+      el.textContent = message;
+      el.classList.remove("alert--error", "alert--success");
+      el.classList.add(type === "success" ? "alert--success" : "alert--error");
+      el.style.display = "block";
+    }
+
+    function tryParseJSON(text) {
+      try {
+        return JSON.parse(text);
+      } catch {
+        return null;
+      }
+    }
+
+    function updatePreview(html) {
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      previewFrame.src = url;
+      downloadHtmlLink.href = url;
+      downloadHtmlLink.style.display = "inline-flex";
+      htmlRawPreview.textContent = html.slice(0, 15000);
+    }
+
+    async function checkApiHealth() {
+      try {
+        const healthUrl = API_BASE_URL.replace("/portfolio", "") + "/health";
+        const res = await fetch(healthUrl);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        apiStatusText.textContent = data.status || "running";
+        apiStatusSub.textContent = API_BASE_URL;
+      } catch {
+        apiStatusText.textContent = "Offline";
+        apiStatusSub.textContent = "Check FastAPI server / port";
+        if (apiStatusPill) {
+          const dot = apiStatusPill.querySelector(".status-dot");
+          if (dot) {
+            dot.style.background = "#fb7185";
+            dot.style.boxShadow = "0 0 10px rgba(248,113,113,0.9)";
+          }
+        }
+      }
+    }
+
+    async function loadTemplates() {
+      try {
+        const res = await fetch(API_BASE_URL + "/templates");
+        if (!res.ok) throw new Error("Unable to load templates");
+        const data = await res.json();
+        const templates = data.templates || [];
+        templateSelect.innerHTML = "";
+        templates.forEach((tpl, index) => {
+          const opt = document.createElement("option");
+          opt.value = tpl.id;
+          opt.textContent = tpl.name || tpl.id;
+          templateSelect.appendChild(opt);
+          if (index === 0) {
+            templateDescription.textContent = tpl.description || "";
+          }
+        });
+        templateSelect.addEventListener("change", () => {
+          const tpl = templates.find(t => t.id === templateSelect.value);
+          templateDescription.textContent = tpl ? tpl.description || "" : "";
+        });
+      } catch (err) {
+        showAlert(generateAlert, err.message || "Failed to fetch templates.");
+      }
+    }
+
+    async function extractFromResume() {
+      showAlert(extractAlert, "");
+      const file = resumeFileInput.files[0];
+      if (!file) {
+        showAlert(extractAlert, "Please select a resume file first.");
+        return;
+      }
+
+      setButtonLoading(resumeExtractBtn, true, "Extracting…");
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(API_BASE_URL + "/extract/resume", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          const msg = errJson.detail || "Failed to extract data from resume.";
+          throw new Error(msg);
+        }
+
+        const data = await res.json();
+        if (!data.success) throw new Error("Backend returned success = false.");
+        jsonEditor.value = JSON.stringify(data.data, null, 2);
+        showAlert(extractAlert, "Resume extracted successfully!", "success");
+      } catch (err) {
+        showAlert(extractAlert, err.message || "Unexpected error during resume extraction.");
+      } finally {
+        setButtonLoading(resumeExtractBtn, false);
+      }
+    }
+
+    async function extractFromPrompt() {
+      showAlert(extractAlert, "");
+      const prompt = promptInput.value.trim();
+      if (!prompt) {
+        showAlert(extractAlert, "Please write a short description first.");
+        return;
+      }
+
+      setButtonLoading(promptExtractBtn, true, "Extracting…");
+      try {
+        const res = await fetch(API_BASE_URL + "/extract/prompt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          const msg = errJson.detail || "Failed to extract data from text.";
+          throw new Error(msg);
+        }
+
+        const data = await res.json();
+        if (!data.success) throw new Error("Backend returned success = false.");
+        jsonEditor.value = JSON.stringify(data.data, null, 2);
+        showAlert(extractAlert, "Text extracted successfully!", "success");
+      } catch (err) {
+        showAlert(extractAlert, err.message || "Unexpected error during text extraction.");
+      } finally {
+        setButtonLoading(promptExtractBtn, false);
+      }
+    }
+
+    async function refinePortfolio() {
+      showAlert(refineAlert, "");
+      const currentData = tryParseJSON(jsonEditor.value);
+      if (!currentData) {
+        showAlert(refineAlert, "Portfolio JSON is invalid. Please fix it before refining.");
+        return;
+      }
+      const refinement = refineInput.value.trim();
+      if (!refinement) {
+        showAlert(refineAlert, "Tell the AI what to refine (for example, ‘make the summary shorter’).");
+        return;
+      }
+
+      setButtonLoading(refineBtn, true, "Refining…");
+      try {
+        const res = await fetch(API_BASE_URL + "/refine", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ current_data: currentData, refinement })
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          const msg = errJson.detail || "Failed to refine portfolio data.";
+          throw new Error(msg);
+        }
+
+        const data = await res.json();
+        if (!data.success) throw new Error("Backend returned success = false.");
+        jsonEditor.value = JSON.stringify(data.data, null, 2);
+        showAlert(refineAlert, "Portfolio refined successfully!", "success");
+      } catch (err) {
+        showAlert(refineAlert, err.message || "Unexpected error during refinement.");
+      } finally {
+        setButtonLoading(refineBtn, false);
+      }
+    }
+
+    async function generatePortfolio() {
+      showAlert(generateAlert, "");
+      const dataJson = tryParseJSON(jsonEditor.value);
+      if (!dataJson) {
+        showAlert(generateAlert, "Portfolio JSON is invalid. Please fix it before generating.");
+        return;
+      }
+      const template = templateSelect.value || "template1";
+
+      setButtonLoading(generateBtn, true, "Generating…");
+      try {
+        const res = await fetch(API_BASE_URL + "/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: dataJson, template })
+        });
+
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          const msg = errJson.detail || "Failed to generate portfolio.";
+          throw new Error(msg);
+        }
+
+        const data = await res.json();
+        if (!data.success) throw new Error("Backend returned success = false.");
+        const files = data.files || {};
+        if (!files.html) throw new Error("Backend did not return HTML.");
+        updatePreview(files.html);
+        showAlert(generateAlert, "Portfolio generated successfully!", "success");
+      } catch (err) {
+        showAlert(generateAlert, err.message || "Unexpected error during generation.");
+      } finally {
+        setButtonLoading(generateBtn, false);
+      }
+    }
+
+    resumeExtractBtn.addEventListener("click", e => {
+      e.preventDefault();
+      extractFromResume();
+    });
+
+    promptExtractBtn.addEventListener("click", e => {
+      e.preventDefault();
+      extractFromPrompt();
+    });
+
+    refineBtn.addEventListener("click", e => {
+      e.preventDefault();
+      refinePortfolio();
+    });
+
+    generateBtn.addEventListener("click", e => {
+      e.preventDefault();
+      generatePortfolio();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      checkApiHealth();
+      loadTemplates();
+    });
+  </script>
+</body>
+</html>
