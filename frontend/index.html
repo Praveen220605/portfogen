@@ -33,7 +33,7 @@
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 17px; /* << bigger base font size */
+      font-size: 17px; /* bigger base font size */
       color: var(--text);
       background:
         radial-gradient(circle at 0% 0%, rgba(56,189,248,0.35), transparent 55%),
@@ -42,6 +42,136 @@
       display: block;
     }
 
+    /* ---------- SPLASH SCREEN ---------- */
+
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      /* match AI page background */
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56,189,248,0.35), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59,130,246,0.4), transparent 55%),
+        linear-gradient(135deg, #020617, #020617 40%, #020617);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    .splash-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .splash-logo-circle {
+      width: 170px;
+      height: 170px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.98);
+      border: 3px solid rgba(56,189,248,0.75);
+      box-shadow:
+        0 0 0 6px rgba(15,23,42,0.9),
+        0 0 28px rgba(56,189,248,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden; /* ✅ keeps logo inside circle */
+      animation: splash-pop 1s ease-out forwards;
+    }
+
+    .splash-logo-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* ✅ fits your logo properly */
+      animation: logo-spin 1.2s ease-out forwards;
+    }
+
+    .splash-title-main {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      color: #e5e7eb;
+      text-transform: uppercase;
+      animation: text-rise 1s ease-out 0.4s forwards;
+      opacity: 0;
+    }
+
+    .splash-title-sub {
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      color: #93c5fd;
+      text-transform: uppercase;
+      animation: text-rise 1s ease-out 0.7s forwards;
+      opacity: 0;
+    }
+
+    .splash-tagline {
+      margin-top: 4px;
+      font-size: 1rem;
+      color: #cbd5f5;
+      animation: text-fade 1s ease-out 1s forwards;
+      opacity: 0;
+    }
+
+    @keyframes splash-pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes logo-spin {
+      0% { transform: scale(0.7) rotate(-20deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes text-rise {
+      0% { transform: translateY(12px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes text-fade {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    /* Progress bar under logo */
+    .splash-progress {
+      margin-top: 12px;
+      width: 140px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.18);
+      overflow: hidden;
+    }
+
+    .splash-progress-inner {
+      width: 50%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #38bdf8, #2563eb);
+      animation: progress-move 1.4s ease-in-out infinite;
+    }
+
+    @keyframes progress-move {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(0); }
+      100% { transform: translateX(120%); }
+    }
+
+    /* ---------- MAIN APP SHELL ---------- */
+
     .app-shell {
       width: 100%;
       min-height: 100vh;
@@ -49,6 +179,14 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .app-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     @media (max-width: 768px) {
@@ -588,11 +726,28 @@
 </head>
 
 <body>
-  <div class="app-shell">
+  <!-- SPLASH SCREEN -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-logo-wrap">
+      <div class="splash-logo-circle">
+        <img src="logo/LOGO.png" alt="Website Logo" />
+      </div>
+      <div class="splash-title-main">SMART PORTFOLIO</div>
+      <div class="splash-title-sub">AI PORTFOLIO STUDIO</div>
+      <!-- Optional: tagline, uncomment if you want -->
+      <!-- <div class="splash-tagline">Wheel of Knowledge rolls on</div> -->
+      <div class="splash-progress">
+        <div class="splash-progress-inner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="app-shell" id="appShell">
     <header class="app-header">
       <div class="brand-block">
         <div class="brand-row">
-          <div class="logo-orb"></div>
+          <img src="logo/LOGO.png" alt="Logo" style="width:32px;height:32px;border-radius:50%;" />
           <div class="brand-title">
             <span class="top">AI portfolio studio</span>
             <span class="main">
@@ -729,7 +884,6 @@
               You can preview it here and download the file.
             </p>
           </div>
-          <span class="endpoint-tag">/templates · /generate</span>
         </div>
 
         <div class="chip-row">
@@ -821,6 +975,9 @@
     const previewFrame = document.getElementById("previewFrame");
     const downloadHtmlLink = document.getElementById("downloadHtmlLink");
     const htmlRawPreview = document.getElementById("htmlRawPreview");
+
+    const splashScreen = document.getElementById("splashScreen");
+    const appShell = document.getElementById("appShell");
 
     function setButtonLoading(btn, isLoading, loadingLabel = "Working…") {
       if (!btn) return;
@@ -1057,6 +1214,7 @@
       }
     }
 
+    // Event listeners
     resumeExtractBtn.addEventListener("click", e => {
       e.preventDefault();
       extractFromResume();
@@ -1077,9 +1235,15 @@
       generatePortfolio();
     });
 
+    // Splash + init
     document.addEventListener("DOMContentLoaded", () => {
-      checkApiHealth();
-      loadTemplates();
+      // Show splash for ~2.6 seconds, then reveal app & start backend calls
+      setTimeout(() => {
+        splashScreen.classList.add("splash-hidden");
+        appShell.classList.add("app-visible");
+        checkApiHealth();
+        loadTemplates();
+      }, 2600);
     });
   </script>
 </body>
